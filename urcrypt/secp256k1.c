@@ -246,8 +246,8 @@ urcrypt_secp_schnorr_veri(urcrypt_secp_context* context,
 
 int
 urcrypt_secp_point_from_scalar(urcrypt_secp_context* context,
-                                const uint8_t scalar[32],
-                                uint8_t point[65]) {
+                               const uint8_t scalar[32],
+                               uint8_t point[65]) {
   urcrypt__reverse(32, scalar);
   secp256k1_keypair keypair;
   secp256k1_pubkey pubkey;
@@ -272,3 +272,17 @@ urcrypt_secp_point_from_scalar(urcrypt_secp_context* context,
   return 0;
 }
 
+int
+urcrypt_secp_scalar_tweak_add(urcrypt_secp_context* context,
+                              uint8_t scalar[32],
+                              const uint8_t tweak[32]) {
+  urcrypt__reverse(32, scalar);
+  urcrypt__reverse(32, tweak);
+
+  if (1 != secp256k1_ec_seckey_tweak_add(context, scalar, tweak)) {
+    return -1;
+  }
+
+  urcrypt__reverse(32, scalar);
+  return 0;
+}
